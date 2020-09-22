@@ -41,9 +41,9 @@ train_dataset = dataset_gen(stacks[:TRAIN_LENGTH], masks[:TRAIN_LENGTH], BATCH_S
 test_dataset = dataset_gen(stacks[1+TRAIN_LENGTH:], masks[1+TRAIN_LENGTH:], BATCH_SIZE)
 
 # define model (img. width, img. height, in. channels, and out. channels)
-model = resunet_a_d6(256, 256, 5, 6)
+model = ResUNet_Model().resunet_a_d6(256, 256, 5, 6)
 
-model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999),loss=focal_tversky_loss, metrics=['accuracy', tversky, tf.keras.metrics.MeanIoU(num_classes=6)])
+model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999),loss=LossFuncs().focal_tversky_loss, metrics=['accuracy', LossFuncs().tversky, tf.keras.metrics.MeanIoU(num_classes=6)])
 
 model.summary()
 
@@ -53,8 +53,10 @@ checkpoint_path='/run/user/1000/gvfs/smb-share:server=192.168.1.30,share=jordan/
 model.load_weights(checkpoint_path)
 '''
 
+# note: callbacks optional
 model.fit(train_dataset, epochs=EPOCHS,
                     steps_per_epoch=STEPS_PER_EPOCH, validation_steps=VALIDATION_STEPS, validation_data=test_dataset, batch_size=BATCH_SIZE, verbose=1, callbacks=[LogTraining(), save_checkpoints])
 
 # save the model
 model.save('model_ckpt/')
+
