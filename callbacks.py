@@ -6,8 +6,6 @@ import tensorflow as tf
 from tensorflow import keras
 from statistics import *
 
-from mysql_pw import mysql_pw
-
 base_dir='/run/user/1000/gvfs/smb-share:server=192.168.1.30,share=jordan/Dump'
 # CHECKPOINT OUTPUT DIR
 
@@ -17,7 +15,7 @@ class LogTraining(keras.callbacks.Callback):
 	def __init__(self):
 		self.losses=[]
 		self.lrs=[]
-		self.instance=21 # used to differentiate training runs (logged in DB and checkpoint names)
+		self.instance=22 # used to differentiate training runs (logged in DB and checkpoint names)
 		self.last_changed=0 # used for current alter_learning_rate()
 
 
@@ -26,7 +24,7 @@ class LogTraining(keras.callbacks.Callback):
 		mydb=mysql.connector.connect(
 			host="192.168.1.38",
 			user="grafana",
-			password=mysql_pw,
+			password='<password>',
 			database=database
 		)
 		return mydb
@@ -113,14 +111,11 @@ def check_dir_existence(dir):
 	if not os.path.exists(dir):
 		os.makedirs(dir)
 
-#instance=21
-instance=LogTraining.instance
-
 # SAVE CHECKPOINT WEIGHTS
 # ---
 # save all weights
 # (source https://lambdalabs.com/blog/tensorflow-2-0-tutorial-03-saving-checkpoints/)
-output_folder = base_dir+'/output_'+str(instance)
+output_folder = base_dir+'/output_'+str(LogTraining().instance)
 # check directory exists, or create
 check_dir_existence(output_folder)
 

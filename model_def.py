@@ -75,7 +75,7 @@ class LossFuncs:
 
 class ResUNet_Model:
     def __res_block(self, x, filters, kernel_size, strides, dilation_rate):
-        def __arm(self, dilation):
+        def arm(dilation):
             batch_norm=tf.keras.layers.BatchNormalization()(x)
             relu=tf.keras.layers.ReLU()(batch_norm)
             conv=tf.keras.layers.Conv2D(filters=filters, kernel_size=kernel_size, strides=strides, dilation_rate=dilation, padding='same')(relu)
@@ -86,7 +86,7 @@ class ResUNet_Model:
 
         outcomes=[x] # might cause problems with size...
         for dilation in dilation_rate:
-            outcomes.append(self.__arm(dilation))
+            outcomes.append(arm(dilation))
         
         value=(tf.keras.layers.Add()(outcomes))
 
@@ -94,7 +94,7 @@ class ResUNet_Model:
         
 
     def __psp_pooling(self, x, features):
-        def unit(self, index, pool_size):
+        def unit(index, pool_size):
             # split= split into 1/4
 
             split=tf.split(value=x, num_or_size_splits=4, axis=3)[index] # axis=0 is the default, but not sure is correct... need dyn. index?
@@ -103,7 +103,7 @@ class ResUNet_Model:
 
             restore_dim=tf.keras.layers.UpSampling2D(size=pool_size, interpolation='bilinear')(max_pool)
 
-            conv2dbn=conv2d_bn(restore_dim, filters=(features//4), kernel_size=(1,1), strides=(1,1), dilation_rate=1)
+            conv2dbn=self.__conv2d_bn(restore_dim, filters=(features//4), kernel_size=(1,1), strides=(1,1), dilation_rate=1)
 
             return conv2dbn
 
@@ -115,7 +115,7 @@ class ResUNet_Model:
             i+=1
 
         concat=tf.keras.layers.Concatenate()(outcomes)
-        conv2dbn=conv2d_bn(concat, filters=features, kernel_size=(1,1), strides=(1,1), dilation_rate=1)
+        conv2dbn=self.__conv2d_bn(concat, filters=features, kernel_size=(1,1), strides=(1,1), dilation_rate=1)
         return conv2dbn
 
     def __conv2d_bn(self, x, filters, kernel_size, strides, dilation_rate):
@@ -151,7 +151,7 @@ class ResUNet_Model:
         enc11=tf.keras.layers.Conv2D(filters=1024, kernel_size=(1,1), strides=(2,2))(enc10)
         enc12=self.__res_block(enc11, filters=1024, kernel_size=(3,3), strides=(1,1), dilation_rate=[1])
         # Pooling bridge
-        psp=psp_pooling(enc12, features=1024)
+        psp=self.__psp_pooling(enc12, features=1024)
         # Decoder
         dec14=self.__upsample(psp, filters=512)
         dec15=self.__combine(filters=512, x1=dec14, x2=enc10)
