@@ -3,8 +3,4 @@ Implementation of Diakogiannis et al.'s [ResUNet-a](https://arxiv.org/abs/1904.0
 
 **If you're training this yourself look at increasing batch size; I'm having to train locally on a P4000, which means a batch size of 2 with 256x256 images. Such a low batch size is known to have implications on accuracy, even with "corrective" regularisation elsewhere...**
 
-### To-do:
-- [Automate learning rate](https://github.com/feevos/resuneta/issues/7#issuecomment-673444936)
-- Implement valid Tanimoto loss
-- Introduce additional augmentation functions (rotate, brightness, zoom)
-- Remove or tune early stopping
+- Consider using Tanimoto loss, opposed to Tversky

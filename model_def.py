@@ -22,7 +22,6 @@ class LossFuncs:
         alpha = 0.7
         return (true_pos + smooth)/(true_pos + alpha*false_neg + (1-alpha)*false_pos + smooth)
 
-    # unused...
     def tversky_loss(self, y_true, y_pred):
         return 1 - self.tversky(y_true,y_pred)
 
@@ -32,10 +31,6 @@ class LossFuncs:
         return tf.keras.backend.pow((1-pt_1), gamma)
 
     '''
-    **
-    FAULTY - LOOKING INTO...
-    **
-    ---
     def tan_loss(y_actual, y_pred):
         # find the mean volume of the class
         Vli=reduce_mean(reduce_sum(y_actual, axis=axis),axis=0)
